@@ -94,12 +94,16 @@ class BasketBall(Data):
     def get(self):
         return self.df_processed.values[:, 1:self.num_columns], self.df_processed.values[:, 0:1]
 
-    def save(self):
-        train, test = train_test_split(self.df_processed, test_size=.07, random_state=100)
-        train.to_csv(base + "/cache/train_basketball.csv", index=False)
-        test.to_csv(base + "/cache/test_basketball.csv", index=False)
+    def save(self, save_train_split=False):
+        print self.df_processed.values.shape
+        self.df_processed.to_csv(base + "/cache/basketball_all.csv", index=False)
+
+        if save_train_split:
+            train, test = train_test_split(self.df_processed, test_size=.07, random_state=100)
+            train.to_csv(base + "/cache/train_basketball.csv", index=False)
+            test.to_csv(base + "/cache/test_basketball.csv", index=False)
 
 
 if __name__ == '__main__':
     instance = BasketBall()
-    instance.save()
+    instance.save(save_train_split=False)

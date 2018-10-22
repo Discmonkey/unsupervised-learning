@@ -49,7 +49,7 @@ class Fire(Data):
         if self.balance:
             self.df_raw = self.df_raw.groupby("FIRE_SIZE_CLASS")
             self.df_raw = self.df_raw.apply(
-                lambda x: x.sample(min(5000, len(x))).reset_index(drop=True)
+                lambda x: x.sample(min(50000, len(x))).reset_index(drop=True)
             )
 
         self.num_columns = len(self.df_raw.columns)
@@ -91,13 +91,16 @@ class Fire(Data):
     def plot_class_balance_post(self):
         pass
 
-    def save(self):
+    def save(self, save_train_split=False):
+        self.df_raw.to_csv(base + "/cache/fire_all.csv", index=False)
         train, test = train_test_split(self.df_raw, test_size=.1, random_state=100)
-        train.to_csv(base + "/cache/train_fire_two_layer.csv", index=False)
-        test.to_csv(base + "/cache/test_fire_two_layer.csv", index=False)
+
+        if save_train_split:
+            train.to_csv(base + "/cache/train_fire_two_layer.csv", index=False)
+            test.to_csv(base + "/cache/test_fire_two_layer.csv", index=False)
 
 
 if __name__ == '__main__':
     f = Fire(normalize=True)
-    f.save()
+    f.save(save_train_split=False)
 
