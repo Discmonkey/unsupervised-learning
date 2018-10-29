@@ -92,6 +92,10 @@ class Fire(Data):
         pass
 
     def save(self, save_train_split=False):
+
+        if not os.path.isdir(os.path.join(base, "cache")):
+            os.makedirs(os.path.join(base, "cache"))
+
         self.df_raw.to_csv(base + "/cache/fire_all.csv", index=False)
         train, test = train_test_split(self.df_raw, test_size=.1, random_state=100)
 

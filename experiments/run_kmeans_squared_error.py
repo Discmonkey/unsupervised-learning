@@ -19,7 +19,7 @@ def get_clusters(df, k=30):
 
 
 def distortions_list(dataset, dataset_name, start=2, end=60):
-    distortions = cluster.gen_distortion_list(dataset, start, end)
+    distortions = cluster.gen_scores(dataset, start, end, cluster.distorition_score_func)
 
     plt_distortions(range(start, end + 1), distortions, dataset_name)
 

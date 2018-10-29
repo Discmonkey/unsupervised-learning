@@ -10,7 +10,8 @@ def k_means_cluster(observations, k):
 
 
 def classify_into_clusters(centroids, observations):
-    widen = observations[:, np.newaxis, :]
+    whiten = cluster.vq.whiten(observations)
+    widen = whiten[:, np.newaxis, :]
 
     scores = np.sum((widen - centroids)**2, axis=2)
 
@@ -24,10 +25,26 @@ def create_dataframe_from_assignments(cluster_assignments, labels):
                         columns=['LABELS', 'CLUSTER_ASSIGNMENTS'])
 
 
-def gen_distortion_list(observations, min_clusters=2, max_clusters=20):
+def calculate_purity(cluster_assignment_dataframe):
+    # i'm a monster
+    total = cluster_assignment_dataframe.groupby(['CLUSTER_ASSIGNMENTS', 'LABELS']).count().reset_index().groupby(
+        ['CLUSTER_ASSIGNMENTS']).max()['count'].sum()
+
+    return total / len(cluster_assignment_dataframe)
+
+
+def distorition_score_func(k_means_tuple):
+    return k_means_tuple[1]
+
+
+def gen_scores(observations, min_clusters=2, max_clusters=20, score_func=None):
+    if score_func is None:
+        raise ValueError("No score func provided")
+
     distortions = []
     for i in range(min_clusters, max_clusters + 1):
         print i
-        distortions.append(k_means_cluster(observations, i)[1])
+        distortions.append(score_func(k_means_cluster(observations, i)))
 
     return distortions
+

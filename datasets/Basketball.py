@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from top_level_file import base
 from sklearn.model_selection import train_test_split
+import os
 
 
 class BasketBall(Data):
@@ -95,7 +96,9 @@ class BasketBall(Data):
         return self.df_processed.values[:, 1:self.num_columns], self.df_processed.values[:, 0:1]
 
     def save(self, save_train_split=False):
-        print self.df_processed.values.shape
+        if not os.path.isdir(os.path.join(base, "cache")):
+            os.makedirs(os.path.join(base, "cache"))
+
         self.df_processed.to_csv(base + "/cache/basketball_all.csv", index=False)
 
         if save_train_split:
