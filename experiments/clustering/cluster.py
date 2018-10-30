@@ -26,11 +26,12 @@ def create_dataframe_from_assignments(cluster_assignments, labels):
 
 
 def calculate_purity(cluster_assignment_dataframe):
+    cluster_assignment_dataframe['count'] = 1
     # i'm a monster
     total = cluster_assignment_dataframe.groupby(['CLUSTER_ASSIGNMENTS', 'LABELS']).count().reset_index().groupby(
         ['CLUSTER_ASSIGNMENTS']).max()['count'].sum()
 
-    return total / len(cluster_assignment_dataframe)
+    return float(total) / len(cluster_assignment_dataframe)
 
 
 def distorition_score_func(k_means_tuple):

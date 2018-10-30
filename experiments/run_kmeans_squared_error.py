@@ -28,7 +28,7 @@ def distortions_list(dataset, dataset_name, start=2, end=60):
 
 def plt_distortions(range, distortions, dataset_name):
     plt.plot(range, distortions)
-    plt.title("Average Error For KMeans {} dataset By K".format(dataset_name))
+    plt.title("Cluster Total Squared Error For {} dataset By K".format(dataset_name.capitlize()))
     plt.xlabel("Num Clusters (K)")
     plt.ylabel("Squared Error")
 

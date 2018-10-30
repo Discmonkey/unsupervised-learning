@@ -6,20 +6,23 @@ from utils import get_string_parser, load_dataset
 import matplotlib.pyplot as plt
 
 
-def get_purity_error(cluster_tuple):
+def purity_list(dataset, dataset_name, start=2, end=30):
+    x, y = util.get_x_y(dataset)
 
-    centroids, score = cluster_tuple
+    def get_purity_error(cluster_tuple):
 
-    classifications = cluster.classify_into_clusters(centroids, x)
-
-    combined_df = cluster.create_dataframe_from_assignments(classifications, y)
-
-    return cluster.calculate_purity(combined_df)
+        # now i'm really being a monster
 
 
-def purity_list(dataset, dataset_name, start=2, end=60):
+        centroids, score = cluster_tuple
 
-    distortions = cluster.gen_scores(dataset, start, end, get_purity_error)
+        classifications = cluster.classify_into_clusters(centroids, x)
+
+        combined_df = cluster.create_dataframe_from_assignments(classifications, y)
+
+        return cluster.calculate_purity(combined_df)
+
+    distortions = cluster.gen_scores(x, start, end, get_purity_error)
 
     plt_purity(range(start, end + 1), distortions, dataset_name)
 
@@ -28,7 +31,7 @@ def purity_list(dataset, dataset_name, start=2, end=60):
 
 def plt_purity(range, distortions, dataset_name):
     plt.plot(range, distortions)
-    plt.title("Average Error For KMeans {} dataset By K".format(dataset_name))
+    plt.title("Cluster Purity for {} Dataset By K".format(dataset_name.capitalize()))
     plt.xlabel("Num Clusters (K)")
     plt.ylabel("Squared Error")
 
