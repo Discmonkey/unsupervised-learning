@@ -13,7 +13,6 @@ def purity_list(dataset, dataset_name, start=2, end=30):
 
         # now i'm really being a monster
 
-
         centroids, score = cluster_tuple
 
         classifications = cluster.classify_into_clusters(centroids, x)

@@ -1,6 +1,7 @@
 from scipy import cluster
 import numpy as np
 import pandas as pd
+from sklearn.metrics import normalized_mutual_info_score
 
 
 def k_means_cluster(observations, k):
@@ -32,6 +33,11 @@ def calculate_purity(cluster_assignment_dataframe):
         ['CLUSTER_ASSIGNMENTS']).max()['count'].sum()
 
     return float(total) / len(cluster_assignment_dataframe)
+
+
+def calculate_mutual_info(cluster_assignment_dataframe):
+    return normalized_mutual_info_score(cluster_assignment_dataframe.LABELS.astype(np.int32).tolist(),
+                                        cluster_assignment_dataframe.CLUSTER_ASSIGNMENTS.astype(np.int32).tolist())
 
 
 def distorition_score_func(k_means_tuple):
