@@ -10,27 +10,38 @@ import numpy as np
 import argparse
 
 
-def main(experiment_name): 
-    df = pd.read_csv(os.path.join(base, "..", "datasets/cache/train_basketball.csv"))
+def main(dataset_name, reduction_name):
+    df = pd.read_csv(os.path.join(base, "..", "datasets", "cache", "{}-train-{}.csv".format(dataset_name, reduction_name)))
     num_columns = len(df.columns) - 1 
 
     model = keras.models.Sequential()
-    model.add(keras.layers.InputLayer(input_shape=(num_columns,)))
-    model.add(keras.layers.Dense(num_columns, activation='relu')) 
-    model.add(keras.layers.Dense(num_columns, activation='relu'))
-    model.add(keras.layers.Dense(num_columns * 2, activation='relu'))
-    model.add(keras.layers.Dense(30, activation='softmax'))
+
+    if dataset_name == 'basketball':
+        model.add(keras.layers.InputLayer(input_shape=(num_columns,)))
+        model.add(keras.layers.Dense(num_columns, activation='relu'))
+        model.add(keras.layers.Dense(num_columns, activation='relu'))
+        model.add(keras.layers.Dense(num_columns * 2, activation='relu'))
+        model.add(keras.layers.Dense(30, activation='softmax'))
+    else:
+        model.add(keras.layers.InputLayer(input_shape=(num_columns,)))
+        model.add(keras.layers.Dense(num_columns, activation='relu'))
+        model.add(keras.layers.Dense(num_columns, activation='relu'))
+        model.add(keras.layers.Dense(num_columns, activation='relu'))
+        model.add(keras.layers.Dense(2, activation='softmax'))
 
     # optimizer = keras.optimizers.SGD(lr=.0001, momentum=.01)
 
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-    model_dir = os.path.join(base, "training", "fire", experiment_name)
-    saved_model_dir = os.path.join(base, "training", "fire", experiment_name + "save_model")
+    model_dir = os.path.join(base, "training", dataset_name, reduction_name)
+    saved_model_dir = os.path.join(base, "training", "fire", reduction_name + "saved_model")
+
+    if os.path.exists(model_dir):
+        os.removedirs(model_dir)
 
     os.makedirs(model_dir)
 
-    x, y = df.values[:, 1:(num_columns + 1)], df.values[:, 0:1]
+    x, y = df.values[:, 0:num_columns], df.values[:, num_columns:num_columns + 1]
     enc = OneHotEncoder()
     enc.fit(y.reshape(-1, 1))
 
@@ -44,8 +55,9 @@ def main(experiment_name):
 
 if __name__ == '__main__': 
     parser = argparse.ArgumentParser()
-    parser.add_argument("experiment_name") 
+    parser.add_argument("dataset")
+    parser.add_argument("reduction")
 
     args = parser.parse_args()
 
-    main(args.experiment_name) 
+    main(args.dataset, args.reduction)

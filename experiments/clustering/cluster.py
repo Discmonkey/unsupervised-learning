@@ -21,6 +21,13 @@ def classify_into_clusters(centroids, observations):
     return cluster_assignments
 
 
+def get_cluster_dists(centroids, observations):
+    whiten = cluster.vq.whiten(observations)
+    widen = whiten[:, np.newaxis, :]
+
+    return np.sum((widen - centroids)**2, axis=2)
+
+
 def create_dataframe_from_assignments(cluster_assignments, labels):
     return pd.DataFrame(np.concatenate((labels, cluster_assignments.reshape(labels.shape)), axis=1),
                         columns=['LABELS', 'CLUSTER_ASSIGNMENTS'])
@@ -40,7 +47,7 @@ def calculate_mutual_info(cluster_assignment_dataframe):
                                         cluster_assignment_dataframe.CLUSTER_ASSIGNMENTS.astype(np.int32).tolist())
 
 
-def distorition_score_func(k_means_tuple):
+def distortion_score_func(k_means_tuple):
     return k_means_tuple[1]
 
 
@@ -54,4 +61,33 @@ def gen_scores(observations, min_clusters=2, max_clusters=20, score_func=None):
         distortions.append(score_func(k_means_cluster(observations, i)))
 
     return distortions
+
+
+def cluster_after_reduction(reducer, x, k):
+    fit = reducer.fit_transform(x)
+
+    return k_means_cluster(fit, k)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

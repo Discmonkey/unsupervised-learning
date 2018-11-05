@@ -106,6 +106,20 @@ class BasketBall(Data):
             train.to_csv(base + "/cache/train_basketball.csv", index=False)
             test.to_csv(base + "/cache/test_basketball.csv", index=False)
 
+    def transform(self, transform_func):
+        x, y = self.df_processed.values[:, 1:self.num_columns], self.df_raw.values[:, 0:1]
+        x = transform_func(x)
+
+        together = np.concatenate(x, y)
+
+        return pd.DataFrame(together, columns=self.df_raw.columns)
+
+    @staticmethod
+    def save_(dataset, name):
+        train, test = train_test_split(dataset, test_size=.1, random_state=100)
+        train.to_csv(os.path.join(base, "cache", "basketball-train-{}.csv".format(name)), index=False)
+        test.to_csv(os.path.join(base, "cache", "basketball-test-{}.csv".format(name)), index=False)
+
 
 if __name__ == '__main__':
     instance = BasketBall()

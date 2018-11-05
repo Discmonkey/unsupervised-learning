@@ -6,6 +6,7 @@ import pandas as pd
 from sklearn import preprocessing
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+import numpy as np
 
 
 class Fire(Data):
@@ -102,6 +103,21 @@ class Fire(Data):
         if save_train_split:
             train.to_csv(base + "/cache/train_fire_two_layer.csv", index=False)
             test.to_csv(base + "/cache/test_fire_two_layer.csv", index=False)
+
+    def transform(self, transform_func):
+        x, y = self.df_raw.values[:, 1:self.num_columns], self.df_raw.values[:, 0:1]
+        x = transform_func(x)
+
+        together = np.concatenate(x, y)
+
+        return pd.DataFrame(together, columns=self.df_raw.columns)
+
+    @staticmethod
+    def save_(dataset, name):
+        train, test = train_test_split(dataset, test_size=.1, random_state=100)
+        train.to_csv(os.path.join(base, "cache", "fire-train-{}.csv".format(name)), index=False)
+        test.to_csv(os.path.join(base, "cache", "fire-test-{}.csv".format(name)), index=False)
+
 
 
 if __name__ == '__main__':
